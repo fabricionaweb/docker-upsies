@@ -1,0 +1,30 @@
+name: Commit-Upgrade
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to apply to .env'
+        required: true
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+    steps:
+      # https://github.com/actions/checkout
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Configure git bot
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit new release
+        run: |
+          NEW_VERSION=${{ github.event.inputs.version }}
+          sed -i "s/^VERSION=.*/VERSION=$NEW_VERSION/" .env
+          git commit -am "upgrade to $NEW_VERSION"
+          git push
