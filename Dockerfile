@@ -4,8 +4,11 @@ ENV TZ=UTC
 # dependencies
 RUN apk add --no-cache tzdata ffmpeg mediainfo oxipng pipx
 
-# app
+# pipx configs
 ENV PIPX_HOME=/app PIPX_BIN_DIR=/app/bin PIPX_MAN_DIR=/app/man
+ENV PATH="$PATH:$PIPX_BIN_DIR"
+
+# install upsies
 ARG VERSION
 RUN pipx install upsies==$VERSION
 
@@ -17,5 +20,5 @@ ENV XDG_CONFIG_HOME=/app
 WORKDIR /app/upsies
 VOLUME /app/upsies
 
-# run
+# keep container run with a fake program
 ENTRYPOINT ["sleep", "infinity"]
