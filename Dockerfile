@@ -2,7 +2,7 @@ FROM public.ecr.aws/docker/library/alpine:3.19 AS base
 ENV TZ=UTC
 
 # dependencies
-RUN apk add --no-cache tini tzdata ffmpeg mediainfo oxipng pipx
+RUN apk add --no-cache tzdata ffmpeg mediainfo oxipng pipx
 
 # app
 ENV PIPX_HOME=/app PIPX_BIN_DIR=/app/bin PIPX_MAN_DIR=/app/man
@@ -18,4 +18,4 @@ WORKDIR /app/upsies
 VOLUME /app/upsies
 
 # run
-ENTRYPOINT ["/sbin/tini", "--", "/app/bin/upsies"]
+ENTRYPOINT ["sleep", "infinity"]
