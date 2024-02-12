@@ -15,12 +15,12 @@ RUN pipx install upsies==$VERSION
 # drop permissions
 USER 1000:1000
 
-# set home to store .bash_history and colors
+# set home to store .bash_history and improve colors
 ENV HOME=/app/upsies TERM=xterm-256color
 # set upsies config dir
 ENV XDG_CONFIG_HOME=/app
 WORKDIR /app/upsies
 VOLUME /app/upsies
 
-# keep container run with a fake program - say no word
+# keep container running with a fake program - say no word
 ENTRYPOINT ["sleep", "infinity"]
