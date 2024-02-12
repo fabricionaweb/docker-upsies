@@ -35,7 +35,7 @@ While this is not the perfect solution, it is what I can do to prevent to be re-
 It is helpful for Unraid.
 
 After have the container running, it shows no logs. That is fine.
-You just need to attach an internative shell and start use it: `docker exec -it upsies sh` (adjust `upsies` as the name of your container)
+You just need to attach an internative shell and start use it: `docker exec -it upsies bash` (adjust `upsies` as the name of your container)
 
 Inside the interative shell you can play with `upsies` just fine.
 
