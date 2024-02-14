@@ -22,6 +22,10 @@ jobs:
       - name: Get environment from a file
         run: cat .env >>"$GITHUB_ENV"
 
+      # Install docker
+      - name: Install Docker
+        run: curl -fsSL https://get.docker.com | sh
+
       # https://github.com/docker/setup-buildx-action
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
