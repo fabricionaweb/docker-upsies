@@ -30,13 +30,10 @@ services:
       - /mnt/user/data:/data:ro
 ```
 
-upsies doesnt have daemon, in order to keep the container alive its running a `sleep infinity` program.
-While this is not the perfect solution, it is what I can do to prevent to be re-creating the container, passing the paths and permissions everytime...
-It is helpful for Unraid.
+`upsies` does not have a daemon process, in order to keep the container alive its running a `sleep infinity` program.
 
-After have the container running, it shows no logs. That is fine.
-You just need to attach an internative shell and start use it: `docker exec -it upsies bash` (adjust `upsies` as the name of your container)
+While this is not the perfect solution, its what I have done to prevent recreating the container (passing the paths, permissions, etc) all the time.
 
-Inside the interative shell you can play with `upsies` just fine.
+After have the container running there is logs. That is fine. You just need to attach an internative shell and start use it: `docker exec -it upsies bash` (adjust `upsies` as the name of your container)
 
-[Check upsies docs](https://upsies.readthedocs.io/en/stable/cli_reference.html)
+Inside the interative shell you can play with `upsies`. [Check upsies docs](https://upsies.readthedocs.io/en/stable/cli_reference.html)
