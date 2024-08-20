@@ -1,4 +1,4 @@
-FROM public.ecr.aws/docker/library/alpine:3.19 AS base
+FROM public.ecr.aws/docker/library/alpine:3.20 AS base
 ENV TZ=UTC
 
 # dependencies
