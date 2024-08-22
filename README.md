@@ -34,6 +34,6 @@ services:
 
 While this is not the perfect solution, its what I have done to prevent recreating the container (passing the paths, permissions, etc) all the time.
 
-After have the container running there is logs. That is fine. You just need to attach an internative shell and start use it: `docker exec -it upsies bash` (adjust `upsies` as the name of your container)
+After have the container running there is no logs. That is fine. You just need to attach an internative shell and start use it: `docker exec -it upsies bash` (adjust `upsies` as the name of your container)
 
 Inside the interative shell you can play with `upsies`. [Check upsies docs](https://upsies.readthedocs.io/en/stable/cli_reference.html)
