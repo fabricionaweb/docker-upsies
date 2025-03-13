@@ -2,6 +2,14 @@ name: Build-Publish
 
 on:
   push:
+    paths: ['.env', 'Dockerfile', 'rootfs/**', 'patches/**']
+  workflow_dispatch:
+    inputs:
+      no-cache:
+        description: 'Disable cache'
+        required: false
+        default: false
+        type: boolean
 
 env:
   REGISTRY_IMAGE: gitea.fabricio.dev/${{ github.repository }}
@@ -21,10 +29,6 @@ jobs:
 
       - name: Get environment from a file
         run: cat .env >>"$GITHUB_ENV"
-
-      # Install docker
-      - name: Install Docker
-        run: curl -fsSL https://get.docker.com | sh
 
       # https://github.com/docker/setup-buildx-action
       - name: Set up Docker Buildx
