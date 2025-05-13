@@ -1,16 +1,16 @@
-hardcode add "upload" tags to every upsies submission
+hardcode add "upload" tag to qbittorrent for every submission
 
---- a/upsies/utils/btclient.py
-+++ b/upsies/utils/btclient.py
-@@ -147,6 +147,11 @@ class BtClient:
-                     hashes=infohash,
-                     category=str(self._category),
-                 )
-+                await self._api.call(
-+                    'torrents/addTags',
-+                    hashes=infohash,
-+                    tags='upload',
-+                )
-             except aiobtclientrpc.RPCError as e:
-                 if 'incorrect category name' in str(e).lower():
-                     raise errors.TorrentAddError(f'Unknown category: {self._category}') from e
+--- a/upsies/btclients/qbittorrent.py
++++ b/upsies/btclients/qbittorrent.py
+@@ -39,6 +39,11 @@ class QbittorrentBtclient(base.Btclient):
+                 hashes=infohash,
+                 category=category,
+             )
++            await self._api.call(
++                'torrents/addTags',
++                hashes=infohash,
++                tags='upload',
++            )
+         except aiobtclientrpc.RPCError as e:
+             if 'incorrect category name' in str(e).lower():
+                 raise errors.TorrentAddError(f'Unknown category: {category}') from e
