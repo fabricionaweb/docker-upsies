@@ -1,0 +1,17 @@
+ffmpeg filter to hdr tonemap screenshots
+
+--- a/upsies/utils/image.py
++++ b/upsies/utils/image.py
+@@ -70,6 +70,12 @@ def _make_screenshot_cmd(video_file, timestamp, screenshot_file):
+         for filtername, filtervalue in vf.items()
+     )
+
++    if any(
++            hdr_formats in ('HDR', 'HDR10', 'HDR10+')
++            for hdr_formats in utils.mediainfo.video.get_hdr_formats(video_file)
++    ):
++        vf += ',zscale=t=linear,tonemap=mobius:desat=10,zscale=t=bt709'
++
+     return (
+         _ffmpeg_executable(),
+         '-y',
