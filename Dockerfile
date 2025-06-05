@@ -16,7 +16,8 @@ EOF
 
 # install upsies
 ARG VERSION
-RUN pipx install 'git+https://codeberg.org/fabricionaweb/upsies.git' --global
+ARG COMMIT
+RUN echo "$COMMIT" && pipx install 'git+https://codeberg.org/fabricionaweb/upsies.git' --global
 
 # apply custom patch
 COPY patches /opt/patches
