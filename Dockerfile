@@ -26,11 +26,10 @@ RUN find /opt/patches -name "*.patch" -print0 | sort -z | \
 # clean up dependencies
 RUN apk del --purge build-deps
 
-# drop permissions set dirs
+# drop permissions and set dirs
 USER 1000:1000
 ENV HOME=/app/upsies XDG_CONFIG_HOME=/app XDG_CACHE_HOME=/app/upsies/.cache
+
 WORKDIR /app/upsies
 VOLUME /app/upsies
-
-COPY entrypoint.sh /
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["upsies"]

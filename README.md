@@ -12,28 +12,35 @@ My Docker image for [upsies](https://codeberg.org/plotski/upsies).
 
 docker run
 ```
-docker run -d --name=upsies \
+docker run -it --rm \
+  --init \
+  --network host \
   -u 99:100 \
   -v /mnt/appdata/docker/upsies:/app/upsies \
   -v /mnt/user/data:/data:ro \
-  ghcr.io/fabricionaweb/docker-upsies
+  ghcr.io/fabricionaweb/docker-upsies:latest \
+  help
 ```
 
-compose
+**Alias**
+
+The easiest way to use this image is having `upsies` alias on host so you don't
+need to write full docker run command all the time.
+
+Put the alias in the file `~/.bashrc` or `~/.zshrc` (depends on your shell).
+Adjust it by your needs:
+
 ```
-services:
-  upsies:
-    image: ghcr.io/fabricionaweb/docker-upsies
-    user: 99:100
-    volumes:
-      - /mnt/appdata/docker/upsies:/app/upsies
-      - /mnt/user/data:/data:ro
+upsies() {
+    docker run -it --rm \
+        --init \
+        --network host \
+        -u 99:100 \
+        -v /mnt/spool/appdata/docker/upsies:/app/upsies \
+        -v /mnt/user/data:/data \
+        ghcr.io/fabricionaweb/docker-upsies:latest \
+        "$@";
+}
 ```
 
-`upsies` does not have a daemon process, in order to keep the container alive its running a `sleep infinity` program.
-
-While this is not the perfect solution, its what I have done to prevent recreating the container (passing the paths, permissions, etc) all the time.
-
-After have the container running there is no logs. That is fine. You just need to attach an internative shell and start use it: `docker exec -it upsies bash` (adjust `upsies` as the name of your container)
-
-Inside the interative shell you can play with `upsies`. [Check upsies docs](https://upsies.readthedocs.io/en/stable/cli_reference.html)
+Refresh it by closing/open the current shell session. Run `upsies help`
