@@ -2,8 +2,8 @@ FROM public.ecr.aws/docker/library/alpine:3.21 AS base
 ENV TZ=UTC TERM=xterm-256color
 
 # dependencies
-RUN apk add --no-cache --virtual=build-deps build-base python3-dev && \
-    apk add --no-cache bash pipx tzdata ffmpeg mediainfo oxipng && \
+RUN apk add --no-cache --virtual=build-deps build-base python3-dev git && \
+    apk add --no-cache bash pipx tzdata tini curl ffmpeg mediainfo oxipng && \
     apk add mono libgdiplus -X https://dl-cdn.alpinelinux.org/alpine/edge/community
 
 # copy the BDInfo binaries from the recommended docker image
@@ -16,7 +16,8 @@ EOF
 
 # install upsies
 ARG VERSION
-RUN pipx install upsies==$VERSION --global
+RUN echo $VERSION && \
+    pipx install 'git+https://codeberg.org/plotski/upsies.git' --global
 
 # apply custom patch
 COPY patches /opt/patches
@@ -26,10 +27,11 @@ RUN find /opt/patches -name "*.patch" -print0 | sort -z | \
 # clean up dependencies
 RUN apk del --purge build-deps
 
-# drop permissions and set dirs
-USER 1000:1000
+# set dirs
 ENV HOME=/app/upsies XDG_CONFIG_HOME=/app XDG_CACHE_HOME=/app/upsies/.cache
 
 WORKDIR /app/upsies
 VOLUME /app/upsies
-ENTRYPOINT ["upsies"]
+
+# run
+ENTRYPOINT ["/sbin/tini", "--", "upsies"]
