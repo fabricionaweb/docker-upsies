@@ -3,7 +3,7 @@ ENV TZ=UTC TERM=xterm-256color
 
 # dependencies
 RUN apk add --no-cache --virtual=build-deps build-base python3-dev git && \
-    apk add --no-cache bash pipx tzdata tini curl ffmpeg mediainfo oxipng && \
+    apk add --no-cache bash pipx tzdata curl ffmpeg mediainfo oxipng && \
     apk add mono libgdiplus -X https://dl-cdn.alpinelinux.org/alpine/edge/community
 
 # copy the BDInfo binaries from the recommended docker image
@@ -19,11 +19,6 @@ ARG VERSION
 RUN echo $VERSION && \
     pipx install 'git+https://codeberg.org/plotski/upsies.git' --global
 
-# apply custom patch
-COPY patches /opt/patches
-RUN find /opt/patches -name "*.patch" -print0 | sort -z | \
-        xargs -t -0 -n1 patch -d /opt/pipx/venvs/upsies/lib/python3.*/site-packages -p1 -i
-
 # clean up dependencies
 RUN apk del --purge build-deps
 
@@ -34,4 +29,4 @@ WORKDIR /app/upsies
 VOLUME /app/upsies
 
 # run
-ENTRYPOINT ["/sbin/tini", "--", "upsies"]
+ENTRYPOINT ["upsies"]
