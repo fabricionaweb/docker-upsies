@@ -32,4 +32,6 @@ ENV HOME=/app/upsies XDG_CONFIG_HOME=/app XDG_CACHE_HOME=/app/upsies/.cache
 
 WORKDIR /app/upsies
 VOLUME /app/upsies
+
+COPY sleep.sh /usr/local/bin/
 ENTRYPOINT ["upsies"]
