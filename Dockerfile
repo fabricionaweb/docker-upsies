@@ -2,7 +2,7 @@ FROM public.ecr.aws/docker/library/alpine:3.22 AS base
 ENV TZ=UTC TERM=xterm-256color
 
 # dependencies
-RUN apk add --no-cache --virtual=build-deps build-base python3-dev && \
+RUN apk add --no-cache --virtual=build-deps build-base python3-dev git && \
     apk add --no-cache bash pipx tzdata curl mediainfo oxipng && \
     apk add mono libgdiplus -X https://dl-cdn.alpinelinux.org/alpine/edge/community
 
@@ -18,7 +18,8 @@ EOF
 
 # install upsies
 ARG VERSION
-RUN pipx install upsies==$VERSION --global
+RUN echo $VERSION && \
+    pipx install 'git+https://codeberg.org/plotski/upsies.git' --global
 
 # clean up dependencies
 RUN apk del --purge build-deps
