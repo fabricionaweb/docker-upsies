@@ -1,0 +1,11 @@
+--- a/upsies/trackers/ptp/tracker.py
++++ b/upsies/trackers/ptp/tracker.py
+@@ -215,7 +215,7 @@ class PtpTracker(TrackerBase):
+         }
+ 
+     def _find_auth(self, doc):
+-        auth_regex = re.compile(r'logout\.php\?.*\bauth=([0-9a-fA-F]+)')
++        auth_regex = re.compile(r'logout\.php\?.*\bauth=([0-9a-zA-Z]+)')
+         logout_link_tag = doc.find('a', href=auth_regex)
+         if logout_link_tag:
+             logout_link_href = logout_link_tag['href']
