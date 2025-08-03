@@ -21,11 +21,6 @@ ARG VERSION
 RUN echo $VERSION && \
     pipx install 'git+https://codeberg.org/plotski/upsies.git' --global
 
-# apply custom patch
-COPY patches /opt/patches
-RUN find /opt/patches -name "*.patch" -print0 | sort -z | \
-        xargs -t -0 -n1 patch -d /opt/pipx/venvs/upsies/lib/python3.*/site-packages -p1 -i
-
 # clean up dependencies
 RUN apk del --purge build-deps
 
