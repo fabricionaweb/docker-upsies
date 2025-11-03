@@ -18,7 +18,8 @@ EOF
 
 # install upsies
 ARG VERSION
-RUN pipx install upsies==$VERSION --global
+RUN echo $VERSION && \
+    pipx install 'git+https://codeberg.org/plotski/upsies.git' --global
 
 # clean up dependencies
 RUN apk del --purge build-deps
