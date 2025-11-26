@@ -1,0 +1,9 @@
+add draft torrent to the client
+
+--- a/upsies/trackers/bhd/jobs.py
++++ b/upsies/trackers/bhd/jobs.py
+@@ -486,4 +485,0 @@ class BhdTrackerJobs(TrackerJobsBase):
+-
+-    def add_torrent_precondition(self):
+-        """Don't add the torrent to a client if it was submitted as a draft"""
+-        return not self.options['draft']
