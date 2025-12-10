@@ -1,14 +1,12 @@
-FROM public.ecr.aws/docker/library/alpine:3.22 AS base
+FROM public.ecr.aws/docker/library/alpine:3.23
 ENV TZ=UTC TERM=xterm-256color
 
 # dependencies
 RUN apk add --no-cache --virtual=build-deps build-base python3-dev git && \
-    apk add --no-cache bash pipx tzdata curl mediainfo oxipng && \
-    apk add mono libgdiplus -X https://dl-cdn.alpinelinux.org/alpine/edge/community
+    apk add --no-cache ffmpeg mono libgdiplus bash pipx tzdata curl mediainfo oxipng
 
-# copy static ffmpeg until ffmpeg 7 isnt merged (https://gitlab.alpinelinux.org/alpine/aports/-/merge_requests/73024)
-COPY --from=mwader/static-ffmpeg /ffmpeg /ffprobe /usr/local/bin/
-# copy the BDInfo binaries from the recommended docker image
+# copy the BDInfo.exe binary from another docker image
+# it doesnt worth trying to setup or rebuild this pre-historic code
 COPY --from=zoffline/bdinfocli-ng /usr/src/app/build /bdinfo
 # add "bdinfo" alias to $PATH
 COPY --chmod=755 <<EOF /usr/local/bin/bdinfo
