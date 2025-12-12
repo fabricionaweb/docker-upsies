@@ -1,14 +1,12 @@
-FROM public.ecr.aws/docker/library/alpine:3.22 AS base
+FROM public.ecr.aws/docker/library/alpine:3.23
 ENV TZ=UTC TERM=xterm-256color
 
 # dependencies
-RUN apk add --no-cache --virtual=build-deps build-base python3-dev && \
-    apk add --no-cache bash pipx tzdata mediainfo oxipng && \
-    apk add mono libgdiplus -X https://dl-cdn.alpinelinux.org/alpine/edge/community
+RUN apk add --no-cache --virtual=build-deps build-base python3-dev git && \
+    apk add --no-cache bash tzdata pipx ffmpeg mediainfo oxipng mono libgdiplus
 
-# copy static ffmpeg until ffmpeg 7 isnt merged (https://gitlab.alpinelinux.org/alpine/aports/-/merge_requests/73024)
-COPY --from=mwader/static-ffmpeg /ffmpeg /ffprobe /usr/local/bin/
-# copy the BDInfo binaries from the recommended docker image
+# copy the BDInfo.exe binary from another docker image
+# it doesnt worth trying to setup or rebuild this pre-historic code
 COPY --from=zoffline/bdinfocli-ng /usr/src/app/build /bdinfo
 # add "bdinfo" alias to $PATH
 COPY --chmod=755 <<EOF /usr/local/bin/bdinfo
@@ -16,7 +14,7 @@ COPY --chmod=755 <<EOF /usr/local/bin/bdinfo
 mono /bdinfo/BDInfo.exe "\$@"
 EOF
 
-# install upsies
+# install upsies from pypi
 ARG VERSION
 RUN pipx install upsies==$VERSION --global
 
@@ -28,8 +26,7 @@ RUN find /opt/patches -name "*.patch" -print0 | sort -z | \
 # clean up dependencies
 RUN apk del --purge build-deps
 
-# drop permissions and set dirs
-USER 1000:1000
+# set dirs
 ENV HOME=/app/upsies XDG_CONFIG_HOME=/app XDG_CACHE_HOME=/app/upsies/.cache
 
 WORKDIR /app/upsies
