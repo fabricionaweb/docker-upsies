@@ -4,7 +4,8 @@ ENV TZ=UTC TERM=xterm-256color
 # dependencies
 RUN apk add --no-cache --virtual=build-deps build-base python3-dev git && \
     apk add --no-cache ffmpeg bash pipx tzdata curl mediainfo oxipng && \
-    apk add --no-cache bdinfo --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing
+    apk add --no-cache bdinfo --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing && \
+    ln -s BDInfo /usr/bin/bdinfo
 
 # install upsies
 ARG VERSION
