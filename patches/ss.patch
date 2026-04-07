@@ -15,7 +15,7 @@ count towards precreated images
  
          :param exclude_files: Sequence of glob patterns (:class:`str`) and
              :class:`re.Pattern` objects (return value from :func:`re.compile`)
-@@ -380,6 +380,11 @@ def _screenshots_process(
+@@ -380,6 +380,23 @@ def _screenshots_process(
          precreated, exclude_files, timestamps, count,
          from_all_videos, output_dir, overwrite, tonemap,
  ):
@@ -23,6 +23,18 @@ count towards precreated images
 +    if count:
 +        precreated = precreated[:count]
 +        count = max(0, count - len(precreated))
++
++    # If we have enough precreated screenshots, skip video processing
++    if count == 0:
++        screenshots_total = len(precreated)
++        output_queue.put((utils.daemon.MsgType.info, {'screenshots_total': screenshots_total}))
++        for screenshot_filepath in precreated:
++            output_queue.put((utils.daemon.MsgType.info, {
++                'screenshot_filepath': screenshot_filepath,
++                'video_filepath': '',
++                'source': '',
++            }))
++        return
 +
      # First we have to collect all video files we want to create screenshots from. This allows us to
      # report the total number of screenshots.
