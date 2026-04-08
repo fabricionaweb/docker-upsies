@@ -2,26 +2,24 @@ count towards precreated images
 
 --- a/upsies/jobs/screenshots.py
 +++ b/upsies/jobs/screenshots.py
-@@ -49,9 +49,9 @@ class ScreenshotsJob(base.JobBase):
+@@ -49,8 +49,8 @@ class ScreenshotsJob(base.JobBase):
  
          :param precreated: Sequence of paths of already existing screenshots
  
 -            These do not count towards the wanted number of screenshots.
 -            `count` screenshots are created in addition to any precreated
--            screenshots.
-+            If `count` is given, no more than `count` screenshots are created
-+            in total. If there are more than `count` precreated screenshots,
-+            only the first `count` are used.
++            All precreated screenshots are used. Additional screenshots are
++            generated only if `count` is larger than the number of precreated
+             screenshots.
  
          :param exclude_files: Sequence of glob patterns (:class:`str`) and
-             :class:`re.Pattern` objects (return value from :func:`re.compile`)
 @@ -380,6 +380,11 @@ def _screenshots_process(
          precreated, exclude_files, timestamps, count,
          from_all_videos, output_dir, overwrite, tonemap,
  ):
-+    # Determine how many precreated screenshots to use
++    # Determine how many additional screenshots to generate
++    # Use all precreated screenshots, generate more only if count > len(precreated)
 +    if count:
-+        precreated = precreated[:count]
 +        count = max(0, count - len(precreated))
 +
      # First we have to collect all video files we want to create screenshots from. This allows us to
