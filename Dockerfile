@@ -3,16 +3,9 @@ ENV TZ=UTC TERM=xterm-256color
 
 # dependencies
 RUN apk add --no-cache --virtual=build-deps build-base python3-dev git && \
-    apk add --no-cache bash tzdata pipx ffmpeg mediainfo oxipng mono libgdiplus
-
-# copy the BDInfo.exe binary from another docker image
-# it doesnt worth trying to setup or rebuild this pre-historic code
-COPY --from=zoffline/bdinfocli-ng /usr/src/app/build /bdinfo
-# add "bdinfo" alias to $PATH
-COPY --chmod=755 <<EOF /usr/local/bin/bdinfo
-#!/bin/sh
-mono /bdinfo/BDInfo.exe "\$@"
-EOF
+    apk add --no-cache bash tzdata pipx ffmpeg mediainfo oxipng && \
+    apk add --no-cache bdinfo --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing && \
+    ln -s BDInfo /usr/bin/bdinfo
 
 # install upsies from pypi
 ARG VERSION
