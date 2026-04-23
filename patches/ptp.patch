@@ -1,0 +1,13 @@
+add breakline before images
+
+--- a/upsies/trackers/ptp/jobs.py
++++ b/upsies/trackers/ptp/jobs.py
+@@ -369,7 +369,7 @@ class PtpTrackerJobs(TrackerJobsBase):
+             )
+ 
+             # `reports` and/or `screenshots` may be empty.
+-            merged = ''.join((reports, screenshots)).strip()
++            merged = '\n'.join((reports, screenshots)).strip()
+             if merged:
+                 bbcode_per_video.append(merged)
+ 
