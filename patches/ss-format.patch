@@ -1,0 +1,52 @@
+adds --format/-f and --thumb-width/tw to "upsies ss"
+example: upsies ss -n 4 -tw 350 -f '[url={url}][img]{thumbnail}[/img][/url]' -u imgbox path.mkv
+
+--- a/upsies/jobs/imagehost.py
++++ b/upsies/jobs/imagehost.py
+@@ -24 +24 @@ class ImagehostJob(JobBase):
+-    def initialize(self, *, imagehosts, image_paths=()):
++    def initialize(self, *, imagehosts, image_paths=(), thumb_width=None, output_format=None):
+@@ -32,0 +33,5 @@ class ImagehostJob(JobBase):
++        :param int thumb_width: Width in pixels for thumbnails or `None` to use image host config
++
++        :param str output_format: Format string for each output item; uses ``{url}`` and
++            ``{thumbnail}`` as replacement tokens; if `None`, only the URL is output
++
+@@ -44,0 +50,2 @@ class ImagehostJob(JobBase):
++        self._thumb_width = thumb_width
++        self._output_format = output_format or '{url}'
+@@ -91 +98,4 @@ class ImagehostJob(JobBase):
+-        info = await imagehost.upload(image_path, cache=not self.ignore_cache)
++        upload_kwargs = {'cache': not self.ignore_cache}
++        if self._thumb_width is not None:
++            upload_kwargs['thumb_width'] = self._thumb_width
++        info = await imagehost.upload(image_path, **upload_kwargs)
+@@ -95,2 +105,5 @@ class ImagehostJob(JobBase):
+-        image_url = str(info)
+-        self.add_output(image_url)
++        formatted = self._output_format.format(
++            url=str(info),
++            thumbnail=getattr(info, 'thumbnail_url', '') or '',
++        )
++        self.add_output(formatted)
+--- a/upsies/uis/tui/commands/screenshots.py
++++ b/upsies/uis/tui/commands/screenshots.py
+@@ -81,0 +82,15 @@ class screenshots(CommandBase):
++        ('--thumb-width', '-tw'): {
++            'type': utils.argtypes.integer,
++            'metavar': 'PIXELS',
++            'help': 'Thumbnail width in pixels or 0 for no thumbnail',
++            'default': None,
++        },
++        ('--format', '-f'): {
++            'metavar': 'FORMAT',
++            'help': (
++                'Format string for each uploaded image\n'
++                'Use {url} for the full-size image URL and {thumbnail} for the thumbnail URL\n'
++                'Example: "[url={url}][img]{thumbnail}[/img][/url]"'
++            ),
++            'default': None,
++        },
+@@ -144,0 +160,2 @@ class screenshots(CommandBase):
++                thumb_width=self.args.thumb_width,
++                output_format=self.args.format,
