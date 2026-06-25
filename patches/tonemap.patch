@@ -1,0 +1,13 @@
+Change algorithm to mobius (personal taste)
+
+--- a/upsies/utils/image.py
++++ b/upsies/utils/image.py
+@@ -79,7 +79,7 @@ def _make_screenshot_cmd(video_file, timestamp, screenshot_file, tonemap):
+ 
+     if tonemap and _is_tonemappable(video_file):
+         # https://ffmpeg.org/ffmpeg-filters.html#tonemap-1
+-        vf += ',zscale=t=linear,tonemap=hable,zscale=t=bt709,format=rgb24'
++        vf += ',zscale=t=linear,tonemap=mobius,zscale=t=bt709,format=rgb24'
+ 
+     return (
+         _ffmpeg_executable(),
