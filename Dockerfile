@@ -9,8 +9,7 @@ RUN apk add --no-cache --virtual=build-deps build-base python3-dev git && \
 
 # install upsies from pypi
 ARG VERSION
-RUN echo $VERSION && \
-    pipx install 'git+https://codeberg.org/plotski/upsies.git' --global
+RUN pipx install upsies==$VERSION --global
 
 # apply custom patch
 COPY patches /opt/patches
