@@ -1,0 +1,39 @@
+Pre-created screenshots have no associated video file path,
+so we map them to the main video file of the release.
+
+--- a/upsies/trackers/base/jobs.py
++++ b/upsies/trackers/base/jobs.py
+@@ -6,6 +6,7 @@ import abc
+ import builtins
+ import collections
+ import functools
++import itertools
+ import pathlib
+ import re
+ 
+@@ -1000,15 +1001,23 @@ class TrackerJobsBase(abc.ABC):
+             return video_path
+ 
+         # Map each created screenshot to its video file and look up the URL(s) for that screenshot.
+-        # We want any `precreated_screenshots` at the top, so we have to process screenshots first.
+         assert self.upload_screenshots_job.is_finished
+         urls_by_file = self.upload_screenshots_job.urls_by_file
+         screenshots_by_file = self.screenshots_job.screenshots_by_file
++
++        # Pre-created screenshots have no associated video file path, so we map
++        # them to the main video file of the release.
++        main_video_id = next(itertools.chain(
++            (get_video_id(path) for path in self.mediainfo_job.reports_by_file),
++            (get_video_id(path) for path in self.bdinfo_job.reports_by_file),
++        ), get_video_id(utils.fs.find_main_video(self.content_path)))
++
+         for video_filepath, screenshot_filepaths in screenshots_by_file.items():
++            video_id = get_video_id(video_filepath) or main_video_id
+             for screenshot_filepath in screenshot_filepaths:
+                 uploaded_image = urls_by_file.get(screenshot_filepath, None)
+                 if uploaded_image:
+-                    docs[get_video_id(video_filepath)]['screenshot_urls'].append(uploaded_image)
++                    docs[video_id]['screenshot_urls'].append(uploaded_image)
+ 
+         # Map each created mediainfo report to its video file.
+         assert self.mediainfo_job.is_finished or not self.mediainfo_job.is_enabled
