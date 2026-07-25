@@ -1,5 +1,7 @@
-Pre-created screenshots have no associated video file path,
-so we map them to the main video file of the release.
+pre-created screenshots have no associated video file path,
+so we map them to the main video file of the release
+
+useful for ptp when posting pre-created screenshots
 
 --- a/upsies/trackers/base/jobs.py
 +++ b/upsies/trackers/base/jobs.py

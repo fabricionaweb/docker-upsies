@@ -1,4 +1,4 @@
-add draft torrent to the client
+keep draft torrent to the client
 
 --- a/upsies/trackers/bhd/jobs.py
 +++ b/upsies/trackers/bhd/jobs.py

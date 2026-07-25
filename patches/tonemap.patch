@@ -1,4 +1,4 @@
-Change algorithm to mobius (personal taste)
+change algorithm to mobius (personal taste)
 
 --- a/upsies/utils/image.py
 +++ b/upsies/utils/image.py

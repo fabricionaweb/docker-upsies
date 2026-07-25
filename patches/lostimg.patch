@@ -1,0 +1,85 @@
+test new imghost
+
+--- /dev/null
++++ b/upsies/imagehosts/lostimg.py
+@@ -0,0 +1,80 @@
++"""
++Image uploader for lostimg.cc
++"""
++
++import json
++
++from .. import __project_name__, constants, errors, utils
++from . import base
++
++import logging  # isort:skip
++_log = logging.getLogger(__name__)
++
++
++class LostImgImagehostConfig(base.ImagehostConfigBase):
++    """User configuration for :class:`. `"""
++
++    base_url: base.ImagehostConfigValue.base_url(
++        default='https://lostimg.cc',
++    )
++
++    apikey: base.ImagehostConfigValue.apikey(
++        default='',
++        instructions=(
++            'Run ``{__project_name__} ui lostimg -h`` for instructions on how to get an API key.'
++        ),
++    )
++
++
++class LostImgImagehost(base.ImagehostBase):
++    """Upload images to lostimg.cc"""
++
++    name = 'lostimg'
++    Config = LostImgImagehostConfig
++
++    description = (
++        'You need an API key to upload images.\n'
++        '\n'
++        f'  1. Go to {LostImgImagehostConfig().base_url}/settings -> API Keys.\n'
++        f'  2. Give it a name and click on "Create key".\n'
++        f'  3. Store the generated API key in {utils.fs.tildify_path(constants.IMGHOSTS_FILEPATH)}:\n'
++        '\n'
++        f'       $ {__project_name__} set imghosts.lostimg.apikey YOUR_API_KEY'
++    )
++
++    async def _upload_image(self, image_path):
++        try:
++            response = await utils.http.post(
++                url=self.config['base_url'] + '/api/v1/images',
++                cache=False,
++                headers={
++                    'X-API-Key': self.config['apikey'].get_secret_value(),
++                },
++                files={
++                    'file[0]': image_path,
++                },
++            )
++        except errors.RequestError as e:
++            # https://lostimg.cc/docs/api
++            _log.debug('Error: %r', e.text)
++            try:
++                info = json.loads(e.text)
++            except (TypeError, ValueError):
++                if e.text:
++                    raise errors.RequestError(f'Upload failed: {e.text}') from e
++                else:
++                    raise errors.RequestError(f'Upload failed: {e}') from e
++            else:
++                error = info.get('error')
++                if isinstance(error, str):
++                    raise errors.RequestError(error)
++                elif isinstance(error, dict) and 'message' in error and 'status_txt' in info:
++                    raise errors.RequestError(f'{info["status_txt"]}: {error["message"]}')
++                else:
++                    raise errors.RequestError(f'Upload failed: {e.text}') from e
++
++        info = response.json()
++        try:
++            return info['url']
++        except KeyError as e:
++            raise RuntimeError(f'Unexpected response: {response}') from e
