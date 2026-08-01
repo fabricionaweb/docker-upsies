@@ -1,0 +1,46 @@
+--- a/upsies/utils/webdbs/imdb.py
++++ b/upsies/utils/webdbs/imdb.py
+@@ -212,16 +212,23 @@ class ImdbApi(WebDbApiBase):
+         else:
+             return json.dumps({'query': query})
+ 
+-    async def _get_info(self, id):
+-        query = self._get_graphql_query('ID', {'ID': id})
+-        response = (await utils.http.post(
++    async def _get_query_json(self, query):
++        return (await utils.http.post(
+             url=self._url_base,
+             data=query,
+-            headers={'Content-Type': 'application/json'},
++            headers={
++                'Content-Type': 'application/json',
++                'Origin': 'https://www.imdb.com',
++                'Referer': 'https://www.imdb.com/',
++            },
+             timeout=10,
+             cache=True,
+             user_agent='BROWSER',
+         )).json()
++
++    async def _get_info(self, id):
++        query = self._get_graphql_query('ID', {'ID': id})
++        response = await self._get_query_json(query)
+         return response['data']['title'] or {}
+ 
+     async def search(self, query):
+@@ -264,14 +271,7 @@ class ImdbApi(WebDbApiBase):
+             constraints.append('explicitContentConstraint: {explicitContentFilter: INCLUDE_ADULT}')
+ 
+             query = self._get_graphql_query('SEARCH', {'CONSTRAINTS': ', '.join(constraints)})
+-            response = (await utils.http.post(
+-                url=self._url_base,
+-                data=query,
+-                headers={'Content-Type': 'application/json'},
+-                timeout=10,
+-                cache=True,
+-                user_agent='BROWSER',
+-            )).json()
++            response = await self._get_query_json(query)
+             return [
+                 _ImdbSearchResult(info=result['node']['title'], imdb_api=self)
+                 for result in response['data']['advancedTitleSearch']['edges']
